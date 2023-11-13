@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import argparse
+import wandb 
 
 import torch
 import torch.nn as nn
@@ -27,7 +28,10 @@ def main():
     parser.add_argument("--dataset", type=str, default="cifar10")
     parser.add_argument("--outdir", type=str, default="snapshots")
     parser.add_argument("--print_interval", type=int, default=50)
+    parser.add_argument("--randinit", type=bool, default=True)
     args = parser.parse_args()
+
+    wandb.init(project='bans_compare', config=args)
 
     logger = Logger(args)
     logger.print_args()
@@ -73,6 +77,8 @@ def main():
     if args.weight:
         model.load_state_dict(torch.load(args.weight))
 
+    wandb.watch(model)
+
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     kwargs = {
         "model": model,
@@ -98,7 +104,7 @@ def main():
                 train_loss += t_loss
                 i += 1
                 if i % args.print_interval == 0:
-                    writer.add_scalar("train_loss", t_loss, i)
+                    wandb.log({"train_loss": t_loss}, step=i)
 
                     val_loss = 0
                     with torch.no_grad():
@@ -116,9 +122,9 @@ def main():
                         torch.save(updater.model.state_dict(),
                                    last_model_weight)
 
-                    writer.add_scalar("val_loss", val_loss, i)
+                    wandb.log({"val_loss": val_loss}, step=i)
 
-                    logger.print_log(epoch, i, train_loss / args.print_interval, val_loss)
+                    print(epoch, i, train_loss / args.print_interval, val_loss)
                     train_loss = 0
 
         print("best loss: ", best_loss)
@@ -127,7 +133,8 @@ def main():
         updater.gen += 1
         best_loss_list.append(best_loss)
         best_loss = 1e+9
-        model = config.get_model().to(device)
+        if args.randinit:
+            model = config.get_model().to(device)
         optimizer = optim.Adam(model.parameters(), lr=args.lr)
         updater.model = model
         updater.optimizer = optimizer

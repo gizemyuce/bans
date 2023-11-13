@@ -15,5 +15,5 @@ model = Model()
 
 # model = ResNet50()
 def get_model():
-    model = MLP()
+    model = ResNet18()
     return model
