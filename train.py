@@ -28,6 +28,7 @@ def main():
     parser.add_argument("--outdir", type=str, default="snapshots")
     parser.add_argument("--print_interval", type=int, default=1)
     parser.add_argument("--randinit", type=bool, default=True)
+    parser.add_argument("--distloss", type=str, default="default")
     args = parser.parse_args()
 
     wandb.init(project='bans_compare', config=args)
@@ -37,8 +38,8 @@ def main():
 
     if torch.cuda.is_available():
         device = torch.device("cuda")
-    else:
-        device = "cpu"
+    #else:
+    #    device = "cpu"
 
     transform = transforms.Compose([
         transforms.ToTensor(),
@@ -83,6 +84,7 @@ def main():
         "model": model,
         "optimizer": optimizer,
         "n_gen": args.n_gen,
+        "distloss": args.distloss,
     }
 
     updater = BANUpdater(**kwargs)

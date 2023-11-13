@@ -10,13 +10,14 @@ class BANUpdater(object):
         self.model = kwargs.pop("model")
         self.optimizer = kwargs.pop("optimizer")
         self.n_gen = kwargs.pop("n_gen")
+        self.distloss = kwargs.pop("distloss")
         self.last_model = None
         self.gen = 0
 
     def update(self, inputs, targets, criterion):
         self.optimizer.zero_grad()
         outputs = self.model(inputs)
-        if self.gen > 0:
+        if self.gen > 0 and self.distloss=="default":
             teacher_outputs = self.last_model(inputs).detach()
             loss = self.kd_loss(outputs, targets, teacher_outputs)
         else:
