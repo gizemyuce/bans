@@ -107,6 +107,8 @@ def main():
                     wandb.log({"train_loss": t_loss}, step=i)
 
                     val_loss = 0
+                    val_samples = 0
+                    val_correct = 0
                     with torch.no_grad():
                         for idx, (inputs, targets) in enumerate(test_loader):
                             inputs, targets = inputs.to(device), targets.to(device)
@@ -114,7 +116,13 @@ def main():
                             loss = criterion(outputs, targets).item()
                             val_loss += loss
 
+                            _, predicted = torch.max(outputs.data, 1)
+                            val_samples += targets.size(0)
+                            val_correct += (predicted == targets).sum().item()
+
                     val_loss /= len(test_loader)
+                    val_accuracy = val_correct / val_samples
+
                     if val_loss < best_loss:
                         best_loss = val_loss
                         last_model_weight = os.path.join(args.outdir,
@@ -123,6 +131,7 @@ def main():
                                    last_model_weight)
 
                     wandb.log({"val_loss": val_loss}, step=i)
+                    wandb.log({"val_accuracy": val_accuracy}, step=i)
 
                     print(epoch, i, train_loss / args.print_interval, val_loss)
                     train_loss = 0
