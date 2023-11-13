@@ -9,7 +9,6 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.datasets import CIFAR10, MNIST
-from tensorboardX import SummaryWriter
 
 
 from ban import config
@@ -86,7 +85,6 @@ def main():
         "n_gen": args.n_gen,
     }
 
-    writer = SummaryWriter()
     updater = BANUpdater(**kwargs)
     criterion = nn.CrossEntropyLoss()
 
