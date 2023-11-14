@@ -145,11 +145,10 @@ def main():
         best_loss_list.append(best_loss)
         best_loss = 1e+9
         if args.randinit == "true":
-            print("new init")
             model = config.get_model().to(device)
-        #optimizer = optim.Adam(model.parameters(), lr=args.lr)
-        #updater.model = model
-        #updater.optimizer = optimizer
+        optimizer = optim.Adam(model.parameters(), lr=args.lr)
+        updater.model = model
+        updater.optimizer = optimizer
 
     for gen in range(args.n_gen):
         print("Gen: ", gen,
