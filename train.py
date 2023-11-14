@@ -98,7 +98,7 @@ def main():
     for gen in range(args.resume_gen, args.n_gen):
         for epoch in range(args.n_epoch):
             print(device)
-            model.to(device)
+            model = model.to(device)
             train_loss = 0
             for idx, (inputs, targets) in enumerate(train_loader):
                 inputs, targets = inputs.to(device), targets.to(device)
@@ -147,7 +147,7 @@ def main():
         if args.randinit == "true":
             print("new init")
             model = config.get_model().to(device)
-        print(model.parameters.type())
+        print(model.parameters)
         optimizer = optim.Adam(model.parameters(), lr=args.lr)
         updater.model = model
         updater.optimizer = optimizer
