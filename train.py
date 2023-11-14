@@ -147,7 +147,6 @@ def main():
         if args.randinit == "true":
             print("new init")
             model = config.get_model().to(device)
-        print(model.parameters)
         #optimizer = optim.Adam(model.parameters(), lr=args.lr)
         updater.model = model
         updater.optimizer = optimizer
