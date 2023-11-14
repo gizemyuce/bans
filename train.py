@@ -27,7 +27,7 @@ def main():
     parser.add_argument("--dataset", type=str, default="cifar10")
     parser.add_argument("--outdir", type=str, default="snapshots")
     parser.add_argument("--print_interval", type=int, default=1)
-    parser.add_argument("--randinit", type=bool, default=True)
+    parser.add_argument("--randinit", type=bool, action='store_false')
     parser.add_argument("--distloss", type=str, default="default")
     args = parser.parse_args()
 
