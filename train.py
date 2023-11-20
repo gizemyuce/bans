@@ -24,7 +24,7 @@ def main():
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--n_gen", type=int, default=2)
     parser.add_argument("--resume_gen", type=int, default=0)
-    parser.add_argument("--dataset", type=str, default="cifar100")
+    parser.add_argument("--dataset", type=str, default="cifar10")
     parser.add_argument("--outdir", type=str, default="snapshots")
     parser.add_argument("--print_interval", type=int, default=1)
     parser.add_argument("--randinit", type=str, default="true")
