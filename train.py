@@ -116,7 +116,7 @@ def main():
             model = model.to(device)
             train_loss = 0
             for idx, (inputs, targets) in enumerate(train_loader):
-                if idx>=10:
+                if idx>=3:
                     continue
                 
                 inputs, targets = inputs.to(device), targets.to(device)
@@ -177,8 +177,8 @@ def main():
                     
                     teacher_conf.append(conf)
 
-        print(torch.flatten(teacher_conf))
-        print(torch.flatten(learned_idx))
+        print(torch.cat(teacher_conf))
+        print(torch.cat(learned_idx))
 
 
         print("best loss: ", best_loss)
