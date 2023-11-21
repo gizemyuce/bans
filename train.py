@@ -103,6 +103,12 @@ def main():
     best_loss = 1e+9
     best_loss_list = []
 
+    #learned_idx = torch.zeros(len(train_loader)*args.batch_size)
+    learned_idx=[]
+    with torch.no_grad():
+                for idx, (inputs, targets) in enumerate(train_loader):
+                    learned_idx.append(torch.ones(len(targets))*1e5)
+
     print("train...")
     for gen in range(args.resume_gen, args.n_gen):
         for epoch in range(args.n_epoch):
@@ -145,7 +151,18 @@ def main():
                     wandb.log({"val_accuracy": val_accuracy}, step=i)
 
                     print(epoch, i, train_loss / args.print_interval, val_loss)
+            
                     train_loss = 0
+
+            with torch.no_grad():
+                for idx, (inputs, targets) in enumerate(train_loader):
+                    inputs, targets = inputs.to(device), targets.to(device)
+                    outputs = updater.model(inputs)
+                    _, predicted = torch.max(outputs.data, 1)
+                    
+                    comp_array = epoch*(predicted == targets) + 1e5*(predicted != targets)
+                    learned_idx[idx] = torch.min(learned_idx[idx], comp_array)
+
 
         print("best loss: ", best_loss)
         print("Born Again...")
