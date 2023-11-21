@@ -177,8 +177,8 @@ def main():
                     
                     teacher_conf.append(conf)
 
-        print(torch.faltten(teacher_conf))
-        print(torch.faltten(learned_idx))
+        print(torch.flatten(teacher_conf))
+        print(torch.flatten(learned_idx))
 
 
         print("best loss: ", best_loss)
