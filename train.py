@@ -165,6 +165,7 @@ def main():
                     
                     comp_array = epoch*(predicted == targets) + 1e5*(predicted != targets)
                     learned_idx[idx] = torch.min(learned_idx[idx], comp_array)
+                    print(learned_idx[idx])
 
 
         print("best loss: ", best_loss)
