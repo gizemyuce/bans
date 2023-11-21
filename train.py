@@ -107,7 +107,7 @@ def main():
     learned_idx=[]
     with torch.no_grad():
                 for idx, (inputs, targets) in enumerate(train_loader):
-                    learned_idx.append(torch.ones(len(targets).to(device))*1e5)
+                    learned_idx.append(torch.ones(len(targets)).to(device)*1e5)
 
     print("train...")
     for gen in range(args.resume_gen, args.n_gen):
