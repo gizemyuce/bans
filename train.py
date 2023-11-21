@@ -116,7 +116,7 @@ def main():
             model = model.to(device)
             train_loss = 0
             for idx, (inputs, targets) in enumerate(train_loader):
-                if idx>=2:
+                if idx>=10:
                     continue
                 
                 inputs, targets = inputs.to(device), targets.to(device)
@@ -156,16 +156,29 @@ def main():
                     print(epoch, i, train_loss / args.print_interval, val_loss)
             
                     train_loss = 0
+            if gen>0:
+                with torch.no_grad():
+                    for idx, (inputs, targets) in enumerate(train_loader):
+                        inputs, targets = inputs.to(device), targets.to(device)
+                        outputs = updater.model(inputs)
+                        _, predicted = torch.max(outputs.data, 1)
+                        
+                        comp_array = epoch*(predicted == targets) + 1e5*(predicted != targets)
+                        learned_idx[idx] = torch.min(learned_idx[idx], comp_array)
+                        print(learned_idx[idx])
 
+        if gen == 0:
+            teacher_conf = []
             with torch.no_grad():
                 for idx, (inputs, targets) in enumerate(train_loader):
                     inputs, targets = inputs.to(device), targets.to(device)
                     outputs = updater.model(inputs)
-                    _, predicted = torch.max(outputs.data, 1)
+                    conf, predicted = torch.max(outputs.data, 1)
                     
-                    comp_array = epoch*(predicted == targets) + 1e5*(predicted != targets)
-                    learned_idx[idx] = torch.min(learned_idx[idx], comp_array)
-                    print(learned_idx[idx])
+                    teacher_conf.append(conf)
+
+        print(torch.faltten(teacher_conf))
+        print(torch.faltten(learned_idx))
 
 
         print("best loss: ", best_loss)
