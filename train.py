@@ -108,6 +108,7 @@ def main():
     with torch.no_grad():
                 for idx, (inputs, targets) in enumerate(train_loader):
                     learned_idx.append(torch.ones(len(targets))*1e5)
+    learned_idx = learned_idx.to(device)
 
     print("train...")
     for gen in range(args.resume_gen, args.n_gen):
@@ -116,6 +117,9 @@ def main():
             model = model.to(device)
             train_loss = 0
             for idx, (inputs, targets) in enumerate(train_loader):
+                if idx>=2:
+                    continue
+                
                 inputs, targets = inputs.to(device), targets.to(device)
                 t_loss = updater.update(inputs, targets, criterion).item()
                 train_loss += t_loss
