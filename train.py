@@ -183,7 +183,7 @@ def main():
         learned_epoch = torch.cat(learned_epoch)
 
         plt.figure()
-        plt.scatter(teacher_conf,learned_epoch )
+        plt.scatter(teacher_conf.cpu().numpy(),learned_epoch.cpu().numpy() )
         plt.xlabel("teacher confidence")
         plt.ylabel("learned epoch")
         plt.show()
