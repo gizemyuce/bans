@@ -167,7 +167,6 @@ def main():
                         
                         comp_array = epoch*(predicted == targets) + 1e5*(predicted != targets)
                         learned_epoch[idx] = torch.min(learned_epoch[idx], comp_array)
-                        print(learned_epoch[idx])
 
         if gen == 0:
             teacher_conf = []
@@ -178,23 +177,6 @@ def main():
                     conf, predicted = torch.max(outputs.data, 1)
                     
                     teacher_conf.append(conf)
-
-        teacher_conf = torch.cat(teacher_conf)
-        learned_epoch = torch.cat(learned_epoch)
-
-        plt.figure()
-        plt.scatter(teacher_conf.cpu().numpy(),learned_epoch.cpu().numpy() )
-        plt.xlabel("teacher confidence")
-        plt.ylabel("learned epoch")
-        plt.show()
-        plt.savefig("scatter.png")
-
-        data = [[x, y] for (x, y) in zip(teacher_conf, learned_epoch)]
-        table = wandb.Table(data=data, columns = ["teacher confidence", "learned epoch"])
-        wandb.log({"scatter" : wandb.plot.scatter(table,
-                            "teacher confidence", "learned epoch")})
-
-
 
 
         print("best loss: ", best_loss)
@@ -212,6 +194,21 @@ def main():
     for gen in range(args.n_gen):
         print("Gen: ", gen,
               ", best loss: ", best_loss_list[gen])
+        
+    teacher_conf = torch.cat(teacher_conf)
+    learned_epoch = torch.cat(learned_epoch)
+
+    plt.figure()
+    plt.scatter(teacher_conf.cpu().numpy(),learned_epoch.cpu().numpy() )
+    plt.xlabel("teacher confidence")
+    plt.ylabel("learned epoch")
+    plt.show()
+    plt.savefig("scatter.png")
+
+    data = [[x, y] for (x, y) in zip(teacher_conf, learned_epoch)]
+    table = wandb.Table(data=data, columns = ["teacher confidence", "learned epoch"])
+    wandb.log({"scatter" : wandb.plot.scatter(table,
+                        "teacher confidence", "learned epoch")})
 
 
 if __name__ == "__main__":
