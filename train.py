@@ -31,6 +31,7 @@ def main():
     parser.add_argument("--print_interval", type=int, default=50)
     parser.add_argument("--randinit", type=str, default="true")
     parser.add_argument("--distloss", type=str, default="default")
+    parser.add_argument("--n_epoch_teacher", type=int, default=50)
     args = parser.parse_args()
 
     wandb.init(project='bans_compare', config=args)
