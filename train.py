@@ -114,7 +114,11 @@ def main():
 
     print("train...")
     for gen in range(args.resume_gen, args.n_gen):
-        for epoch in range(args.n_epoch):
+        if gen==0:
+            nepoch = args.n_epoch_teacher
+        else:
+            nepoch = args.n_epoch
+        for epoch in range(nepoch):
             model = model.to(device)
             train_loss = 0
             for idx, (inputs, targets) in enumerate(train_loader):
