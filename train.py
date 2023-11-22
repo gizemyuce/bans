@@ -114,13 +114,9 @@ def main():
     print("train...")
     for gen in range(args.resume_gen, args.n_gen):
         for epoch in range(args.n_epoch):
-            print(device)
             model = model.to(device)
             train_loss = 0
             for idx, (inputs, targets) in enumerate(train_loader):
-                if idx>=3:
-                    continue
-                
                 inputs, targets = inputs.to(device), targets.to(device)
                 t_loss = updater.update(inputs, targets, criterion).item()
                 train_loss += t_loss
