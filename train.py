@@ -3,6 +3,8 @@ import os
 import argparse
 import wandb 
 
+import matplotlib.pyplot as plt
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -104,10 +106,10 @@ def main():
     best_loss_list = []
 
     #learned_idx = torch.zeros(len(train_loader)*args.batch_size)
-    learned_idx=[]
+    learned_epoch=[]
     with torch.no_grad():
                 for idx, (inputs, targets) in enumerate(train_loader):
-                    learned_idx.append(torch.ones(len(targets)).to(device)*1e5)
+                    learned_epoch.append(torch.ones(len(targets)).to(device)*1e5)
 
     print("train...")
     for gen in range(args.resume_gen, args.n_gen):
@@ -164,8 +166,8 @@ def main():
                         _, predicted = torch.max(outputs.data, 1)
                         
                         comp_array = epoch*(predicted == targets) + 1e5*(predicted != targets)
-                        learned_idx[idx] = torch.min(learned_idx[idx], comp_array)
-                        print(learned_idx[idx])
+                        learned_epoch[idx] = torch.min(learned_epoch[idx], comp_array)
+                        print(learned_epoch[idx])
 
         if gen == 0:
             teacher_conf = []
@@ -177,8 +179,22 @@ def main():
                     
                     teacher_conf.append(conf)
 
-        print(torch.cat(teacher_conf))
-        print(torch.cat(learned_idx))
+        teacher_conf = torch.cat(teacher_conf)
+        learned_epoch = torch.cat(learned_epoch)
+
+        plt.figure()
+        plt.scatter(teacher_conf,learned_epoch )
+        plt.xlabel("teacher confidence")
+        plt.ylabel("learned epoch")
+        plt.show()
+        plt.savefig("scatter.png")
+
+        data = [[x, y] for (x, y) in zip(teacher_conf, learned_epoch)]
+        table = wandb.Table(data=data, columns = ["teacher confidence", "learned epoch"])
+        wandb.log({"scatter" : wandb.plot.scatter(table,
+                            "teacher confidence", "learned epoch")})
+
+
 
 
         print("best loss: ", best_loss)
