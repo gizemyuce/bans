@@ -172,7 +172,7 @@ def main():
             with torch.no_grad():
                 for idx, (inputs, targets) in enumerate(train_loader):
                     inputs, targets = inputs.to(device), targets.to(device)
-                    outputs = updater.model(inputs)
+                    outputs = nn.functional.softmax(updater.model(inputs), dim=1)
                     conf, predicted = torch.max(outputs.data, 1)
                     
                     teacher_conf.append(conf)
