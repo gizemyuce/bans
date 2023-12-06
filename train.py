@@ -103,7 +103,7 @@ def main():
         "optimizer": optimizer,
         "n_gen": args.n_gen,
         "distloss": args.distloss,
-        "temperature": args.tempreature,
+        "temperature": args.temperature,
         "alpha": args.alpha
     }
 
