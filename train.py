@@ -94,7 +94,7 @@ def main():
     wandb.watch(model)
 
     #optimizer = optim.Adam(model.parameters(), lr=args.lr)
-    optimizer = optim.SGD(model.parameters(), momentum = args.momentum, weight_decay=args.weightdecay )
+    optimizer = optim.SGD(model.parameters(),lr = args.lr, momentum = args.momentum, weight_decay=args.weightdecay )
 
     kwargs = {
         "model": model,
