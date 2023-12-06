@@ -23,7 +23,7 @@ def main():
     parser.add_argument("--weight", type=str, default=None)
     parser.add_argument("--lr", type=float, default=0.01)
     parser.add_argument("--n_epoch", type=int, default=50)
-    parser.add_argument("--batch_size", type=int, default=128)
+    parser.add_argument("--batch_size", type=int, default=96)
     parser.add_argument("--n_gen", type=int, default=2)
     parser.add_argument("--resume_gen", type=int, default=0)
     parser.add_argument("--dataset", type=str, default="cifar10")
@@ -32,6 +32,8 @@ def main():
     parser.add_argument("--randinit", type=str, default="true")
     parser.add_argument("--distloss", type=str, default="default")
     parser.add_argument("--n_epoch_teacher", type=int, default=50)
+    parser.add_argument("--momentum", type= float, default=0.9)
+    parser.add_argument("--weightdecay", type= float, default=3e-4)
     args = parser.parse_args()
 
     wandb.init(project='bans_compare', config=args)
@@ -91,7 +93,9 @@ def main():
 
     wandb.watch(model)
 
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    #optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = optim.SGD(model.parameters(), momentum = args.momentum, weight_decay=args.weightdecay )
+
     kwargs = {
         "model": model,
         "optimizer": optimizer,
@@ -198,6 +202,9 @@ def main():
         
     teacher_conf = torch.cat(teacher_conf)
     learned_epoch = torch.cat(learned_epoch)
+
+    for i in range(torch.max(learned_epoch)):
+        print("Average confidence of samples learned in epoch " + str(i) + " is: " + str(torch.mean(teacher_conf[learned_epoch == i])))
 
     plt.figure()
     plt.scatter(teacher_conf.cpu().numpy(),learned_epoch.cpu().numpy() )
