@@ -36,7 +36,7 @@ class BANUpdater(object):
     def kd_loss(self, outputs, labels, teacher_outputs):
         KD_loss = nn.KLDivLoss()(F.log_softmax(outputs/self.T, dim=1),
                                  F.softmax(teacher_outputs/self.T, dim=1)) * \
-            self.alpha + F.cross_entropy(outputs, labels) * (1. - alpha)
+            self.alpha + F.cross_entropy(outputs, labels) * (1. - self.alpha)
 
         return KD_loss
 
