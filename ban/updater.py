@@ -13,6 +13,8 @@ class BANUpdater(object):
         self.distloss = kwargs.pop("distloss")
         self.last_model = None
         self.gen = 0
+        self.T = kwargs.pop("temperature")
+        self.alpha = kwargs.pop("alpha")
 
     def update(self, inputs, targets, criterion):
         self.optimizer.zero_grad()
@@ -31,10 +33,10 @@ class BANUpdater(object):
         self.last_model = config.get_model().to("cuda")
         self.last_model.load_state_dict(torch.load(weight))
 
-    def kd_loss(self, outputs, labels, teacher_outputs, alpha=0.2, T=20):
-        KD_loss = nn.KLDivLoss()(F.log_softmax(outputs/T, dim=1),
-                                 F.softmax(teacher_outputs/T, dim=1)) * \
-            alpha + F.cross_entropy(outputs, labels) * (1. - alpha)
+    def kd_loss(self, outputs, labels, teacher_outputs):
+        KD_loss = nn.KLDivLoss()(F.log_softmax(outputs/self.T, dim=1),
+                                 F.softmax(teacher_outputs/self.T, dim=1)) * \
+            self.alpha + F.cross_entropy(outputs, labels) * (1. - alpha)
 
         return KD_loss
 
