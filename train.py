@@ -220,7 +220,7 @@ def main():
     wandb.log({"scatter" : wandb.plot.scatter(table,
                         "teacher confidence", "learned epoch")})
     
-    print(torch.max(learned_epoch))
+    print(int(torch.max(learned_epoch).cpu().numpy()))
     for i in range(torch.max(learned_epoch)):
         print("Average confidence of samples learned in epoch " + str(i) + " is: " + str(torch.mean(teacher_conf[learned_epoch == i])))
 
