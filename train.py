@@ -34,6 +34,8 @@ def main():
     parser.add_argument("--n_epoch_teacher", type=int, default=50)
     parser.add_argument("--momentum", type= float, default=0.9)
     parser.add_argument("--weightdecay", type= float, default=3e-4)
+    parser.add_argument("--temperature", type= float, default=2e1)
+    parser.add_argument("--alpha", type= float, default=0.2)
     args = parser.parse_args()
 
     wandb.init(project='bans_compare', config=args)
@@ -101,6 +103,8 @@ def main():
         "optimizer": optimizer,
         "n_gen": args.n_gen,
         "distloss": args.distloss,
+        "temperature": args.tempreature,
+        "alpha": args.alpha
     }
 
     updater = BANUpdater(**kwargs)
@@ -203,9 +207,7 @@ def main():
     teacher_conf = torch.cat(teacher_conf)
     learned_epoch = torch.cat(learned_epoch)
 
-    for i in range(torch.max(learned_epoch)):
-        print("Average confidence of samples learned in epoch " + str(i) + " is: " + str(torch.mean(teacher_conf[learned_epoch == i])))
-
+    
     plt.figure()
     plt.scatter(teacher_conf.cpu().numpy(),learned_epoch.cpu().numpy() )
     plt.xlabel("teacher confidence")
@@ -217,6 +219,11 @@ def main():
     table = wandb.Table(data=data, columns = ["teacher confidence", "learned epoch"])
     wandb.log({"scatter" : wandb.plot.scatter(table,
                         "teacher confidence", "learned epoch")})
+    
+    print(torch.max(learned_epoch))
+    for i in range(torch.max(learned_epoch)):
+        print("Average confidence of samples learned in epoch " + str(i) + " is: " + str(torch.mean(teacher_conf[learned_epoch == i])))
+
 
 
 if __name__ == "__main__":
