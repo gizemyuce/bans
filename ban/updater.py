@@ -19,7 +19,7 @@ class BANUpdater(object):
     def update(self, inputs, targets, criterion):
         self.optimizer.zero_grad()
         outputs = self.model(inputs)
-        if self.gen > 0 and self.distloss=="default":
+        if self.gen > 0 and self.distloss == "default":
             teacher_outputs = self.last_model(inputs).detach()
             loss = self.kd_loss(outputs, targets, teacher_outputs)
         else:
@@ -34,9 +34,10 @@ class BANUpdater(object):
         self.last_model.load_state_dict(torch.load(weight))
 
     def kd_loss(self, outputs, labels, teacher_outputs):
-        KD_loss = nn.KLDivLoss()(F.log_softmax(outputs/self.T, dim=1),
-                                 F.softmax(teacher_outputs/self.T, dim=1)) * \
-            self.alpha + F.cross_entropy(outputs, labels) * (1. - self.alpha)
+        KD_loss = nn.KLDivLoss()(
+            F.log_softmax(outputs / self.T, dim=1),
+            F.softmax(teacher_outputs / self.T, dim=1),
+        ) * self.alpha + F.cross_entropy(outputs, labels) * (1.0 - self.alpha)
 
         return KD_loss
 
