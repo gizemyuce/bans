@@ -214,7 +214,7 @@ def main():
     )
 
     print(int(torch.max(learned_epoch).cpu().numpy()))
-    for i in range(int(torch.max(learned_epoch).cpu().numpy())):
+    for i in range(10):  # range(int(torch.max(learned_epoch).cpu().numpy())):
         print(
             "Average confidence of samples learned in epoch "
             + str(i)
